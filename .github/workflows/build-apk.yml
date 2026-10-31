@@ -1,0 +1,75 @@
+# CATV対応フォークの動作確認用に debug APK をビルドするワークフロー。
+# このブランチ (ci/build-apk) への push と手動実行 (workflow_dispatch) で起動する。
+name: Build debug APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ci/build-apk]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # ネイティブビルドが third_party/libaribcaption サブモジュールを参照するため必須
+          submodules: recursive
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # ランナー標準の Android SDK をそのまま使う。
+      # android-actions/setup-android は旧 'tools' パッケージの取得に失敗するため使わない。
+      - name: Install SDK packages (platform 35 / build-tools / CMake 3.30.5 / NDK)
+        run: |
+          SDKMANAGER=$(ls -d "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | sort -V | tail -1)
+          echo "sdkmanager: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" "platforms;android-35" "build-tools;36.0.0" "cmake;3.30.5" "ndk;28.2.13676358"
+
+      # フォントは容量の都合で assets に置かれているため、ビルド前に res/font へコピーする
+      - name: Copy Noto Sans JP fonts into res/font
+        run: |
+          mkdir -p app/src/main/res/font
+          cp app/src/main/assets/fonts/*.ttf app/src/main/res/font/
+          ls app/src/main/res/font/
+
+      - name: Restore fixed debug keystore
+        # 署名を固定し、再ビルド後も上書きインストールできるようにする。
+        # 鍵はリポジトリのシークレット DEBUG_KEYSTORE_BASE64 (base64) から復元し、
+        # Gradle の injected signing で明示的に指定する (~/.android の自動検出は使わない)。
+        env:
+          DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$DEBUG_KEYSTORE_BASE64" ]; then
+            echo "$DEBUG_KEYSTORE_BASE64" | base64 -d > "$GITHUB_WORKSPACE/fixed-debug.keystore"
+            echo "Fixed debug keystore restored to workspace."
+          else
+            echo "DEBUG_KEYSTORE_BASE64 is not set; using ephemeral debug key."
+          fi
+
+      - name: Build debug APK
+        run: |
+          chmod +x gradlew
+          if [ -f "$GITHUB_WORKSPACE/fixed-debug.keystore" ]; then
+            ./gradlew assembleDebug --console=plain --stacktrace \
+              -Pandroid.injected.signing.store.file="$GITHUB_WORKSPACE/fixed-debug.keystore" \
+              -Pandroid.injected.signing.store.password=android \
+              -Pandroid.injected.signing.key.alias=androiddebugkey \
+              -Pandroid.injected.signing.key.password=android
+          else
+            ./gradlew assembleDebug --console=plain --stacktrace
+          fi
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: komorebi-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
