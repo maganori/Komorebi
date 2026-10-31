@@ -219,6 +219,7 @@ class ChannelViewModel @Inject constructor(
                         channelNumber = apiChannel.channelNumber,
                         networkId = apiChannel.networkId,
                         serviceId = apiChannel.serviceId,
+                        transportStreamId = apiChannel.transportStreamId,
                         displayChannelId = apiChannel.displayChannelId ?: apiChannel.id,
                         isWatchable = apiChannel.isWatchable,
                         isDisplay = apiChannel.isDisplay,
