@@ -52,7 +52,7 @@ fun LastWatchedChannelCard(
     var isFocused by remember { mutableStateOf(false) }
     val colors = KomorebiTheme.colors
     val typeLabels =
-        mapOf("GR" to "地デジ", "BS" to "BS", "CS" to "CS", "BS4K" to "BS4K", "SKY" to "スカパー")
+        mapOf("GR" to "地デジ", "BS" to "BS", "CS" to "CS", "CATV" to "CATV", "BS4K" to "BS4K", "SKY" to "スカパー")
 
     // ★ 最適化: 共有キャッシュから同期的に初期値を取得（チラつき・再解決の防止）
     var logoUrl by remember(channel.id) {

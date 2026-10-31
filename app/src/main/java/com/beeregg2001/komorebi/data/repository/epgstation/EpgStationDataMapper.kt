@@ -43,10 +43,14 @@ object EpgStationDataMapper {
      * 番組表取得に必要な放送波フラグを、指定された種別に応じて組み立てる。
      * /api/schedules は GR/BS/CS/SKY/BS4K/CS4K/NW1〜NW40 が全て必須クエリのため、
      * 絞り込まない場合も含めて必ず全キーを埋める。
+     * ★ CATV対応: CATVキーも併せて送る。現行のEPGStationサーバーはCATV種別を
+     * 知らないためこのキーは無視されるが、未知のクエリはエラーにならない
+     * (サーバー側は既知のキーだけを読む)。サーバー側がCATVに対応した場合は
+     * そのまま有効になる。
      */
     fun buildBroadcastFlags(channelType: String? = null): Map<String, Boolean> {
         val type = channelType?.uppercase()
-        val broadcastTypes = listOf("GR", "BS", "CS", "SKY", "BS4K", "CS4K") +
+        val broadcastTypes = listOf("GR", "BS", "CS", "SKY", "BS4K", "CS4K", "CATV") +
             (1..40).map { "NW$it" }
         return broadcastTypes.associateWith { broadcastType ->
             when {
@@ -282,7 +286,10 @@ object EpgStationDataMapper {
             cs = byType("CS"),
             sky = byType("SKY"),
             // 共通モデルに CS4K の受け皿がないため、4K衛星放送を BS4K にまとめる。
-            bs4k = byType("BS4K") + byType("CS4K")
+            bs4k = byType("BS4K") + byType("CS4K"),
+            // ★ CATV対応: Mirakurun側でCATV種別として登録されたチャンネルを拾う。
+            // EPGStationサーバーがCATV種別を返さない環境では単に空になる。
+            catv = byType("CATV")
         )
     }
 

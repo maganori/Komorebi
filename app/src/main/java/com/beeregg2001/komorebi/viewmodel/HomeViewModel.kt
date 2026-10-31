@@ -202,7 +202,7 @@ class HomeViewModel @Inject constructor(
             val startSearch = now.minusHours(1)
             val endSearch = now.plusDays(3)
 
-            val types = listOf("GR", "BS", "CS")
+            val types = listOf("GR", "BS", "CS", "CATV")
 
             val allPrograms = types.map { type ->
                 async {

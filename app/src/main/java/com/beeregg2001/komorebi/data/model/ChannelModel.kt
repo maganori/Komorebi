@@ -8,7 +8,12 @@ data class ChannelApiResponse(
     @SerializedName("BS") val bs: List<Channel>? = null,
     @SerializedName("CS") val cs: List<Channel>? = null,
     @SerializedName("SKY") val sky: List<Channel>? = null,
-    @SerializedName("BS4K") val bs4k: List<Channel>? = null
+    @SerializedName("BS4K") val bs4k: List<Channel>? = null,
+    // ★ CATV対応: KonomiTV形式のレスポンスで "CATV" キーで返るケーブルテレビの
+    // チャンネルを受け取るバケット。以前は受け皿が無く、サーバーがCATVチャンネルを
+    // 返してもGsonが黙って捨てていた。EDCB/EPGStationバックエンドもこの共通モデルを
+    // 経由するため、3バックエンド共通でCATVを扱えるようになる。
+    @SerializedName("CATV") val catv: List<Channel>? = null
 )
 
 // チャンネル情報

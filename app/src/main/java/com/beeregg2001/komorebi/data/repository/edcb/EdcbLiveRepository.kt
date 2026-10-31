@@ -149,6 +149,7 @@ class EdcbLiveRepository @Inject constructor(
             val cs = mutableListOf<Channel>()
             val sky = mutableListOf<Channel>()
             val bs4k = mutableListOf<Channel>()
+            val catv = mutableListOf<Channel>()
 
             cacheManager.cachedServices.forEach { svc ->
                 val type = cacheManager.getChannelType(svc.onid)
@@ -196,9 +197,12 @@ class EdcbLiveRepository @Inject constructor(
                     "CS" -> cs.add(channel)
                     "SKY" -> sky.add(channel)
                     "BS4K" -> bs4k.add(channel)
-                    // ★ 修正: 以前はelseが無く、CATVや未知のONIDのチャンネルが
-                    // ログも警告も出さずに一覧から消えていた。ChannelApiResponseに
-                    // CATV用のバケットが無いため一覧に出すことはできないが、
+                    // ★ CATV対応: ChannelApiResponseにCATVバケットを追加したため、
+                    // J:COM等のトランスモジュレーション経由のCATVチャンネル
+                    // (getChannelType()が "CATV" と判定するONID) を一覧に出せる。
+                    "CATV" -> catv.add(channel)
+                    // ★ 修正: 以前はelseが無く、未知のONIDのチャンネルが
+                    // ログも警告も出さずに一覧から消えていた。
                     // 「消えたことが分かる」よう警告ログだけは残す。
                     else -> Log.w(
                         TAG,
@@ -212,7 +216,8 @@ class EdcbLiveRepository @Inject constructor(
                 bs = bs.sortedBy { it.channelNumber.toIntOrNull() ?: 9999 },
                 cs = cs.sortedBy { it.channelNumber.toIntOrNull() ?: 9999 },
                 sky = sky.sortedBy { it.channelNumber.toIntOrNull() ?: 9999 },
-                bs4k = bs4k.sortedBy { it.channelNumber.toIntOrNull() ?: 9999 }
+                bs4k = bs4k.sortedBy { it.channelNumber.toIntOrNull() ?: 9999 },
+                catv = catv.sortedBy { it.channelNumber.toIntOrNull() ?: 9999 }
             )
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get channels", e)

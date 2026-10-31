@@ -36,6 +36,7 @@ import java.util.Locale
 private val COLOR_GR = Color(0xFF1E88E5)
 private val COLOR_BS = Color(0xFFE53935)
 private val COLOR_CS = Color(0xFFFB8C00)
+private val COLOR_CATV = Color(0xFF8E24AA)
 private val COLOR_DEFAULT = Color.Gray
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -70,6 +71,7 @@ fun RecordListItem(
         "GR" -> "地デジ" to COLOR_GR
         "BS" -> "BS" to COLOR_BS
         "CS" -> "CS" to COLOR_CS
+        "CATV" -> "CATV" to COLOR_CATV
         else -> (program.channel?.type ?: "") to COLOR_DEFAULT
     }
 

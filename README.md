@@ -5,6 +5,16 @@
 
 ---
 
+## 📺 このフォークについて (CATV対応)
+
+このリポジトリは [BeerEgg2001/Komorebi](https://github.com/BeerEgg2001/Komorebi) のフォークで、本家が未対応だった **CATV (ケーブルテレビ) チャンネルの表示・視聴・番組表** に対応させるための変更を含みます (`feat/catv-support` ブランチ)。
+
+* 本家では、チャンネル種別の共通モデル (`ChannelApiResponse`) に CATV の受け皿が無く、CATVチャンネルは全バックエンドで一覧から除外されていました。特に EDCB バックエンドでは、J:COM 等のトランスモジュレーション経由のチャンネル (ONID が `0xFFFE` / `0xFFFD` / `0xFFFA` / `0xFFF9` / `0xFFF7` のもの) が種別 `CATV` と判定されながら、警告ログを出して破棄されていました。
+* 本フォークでは CATV を GR/BS/CS と並ぶ正式な種別として追加し、チャンネル一覧・ライブ視聴のチャンネルリスト・番組表タブ・EPG同期・録画リストの種別表示まで一貫して扱います。
+* 注意: バックエンドサーバー側が CATV 種別自体を返さない環境 (現行の KonomiTV / EPGStation サーバー等) では、そのサーバーから CATV チャンネルは届きません。EDCB バックエンド (トランスモジュレーション受信) での利用を主対象としています。
+
+---
+
 ## 📥 インストール方法
 
 Komorebiは Google Play ストア等のアプリストアでは配布していません。GitHubの [Releases](https://github.com/BeerEgg2001/Komorebi/releases) ページからAPKファイルを直接ダウンロードし、手動でインストールする形になります。

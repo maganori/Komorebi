@@ -380,6 +380,10 @@ data class EsRuleSearchOption(
     val NW40: Boolean? = null,
     val BS4K: Boolean? = null,
     val CS4K: Boolean? = null,
+    // ★ CATV対応: 自動予約ルールの放送波フラグ。現行サーバーはCATV種別を
+    // 知らないため通常はnullのまま (nullはJSONへ送られない) で無害。
+    // サーバーが返すようになった場合に、更新時の全置換で消えないよう保持する。
+    val CATV: Boolean? = null,
     val channelIds: List<Long>? = null,
     val genres: List<EsRuleGenre>? = null,
     val times: List<EsRuleTime>? = null,

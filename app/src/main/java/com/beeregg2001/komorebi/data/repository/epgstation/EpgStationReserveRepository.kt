@@ -386,9 +386,9 @@ class EpgStationReserveRepository @Inject constructor(
         return serviceRanges.map { it.networkId to it.serviceId }.toSet() == baseServices
     }
 
-    /** GR/BS/CS/SKY/BS4K/CS4K/NW1〜NW40 のいずれかが有効か。 */
+    /** GR/BS/CS/SKY/BS4K/CS4K/CATV/NW1〜NW40 のいずれかが有効か。 */
     private fun EsRuleSearchOption.hasAnyBroadcastFlag(): Boolean = listOf(
-        GR, BS, CS, SKY, BS4K, CS4K,
+        GR, BS, CS, SKY, BS4K, CS4K, CATV,
         NW1, NW2, NW3, NW4, NW5, NW6, NW7, NW8, NW9, NW10,
         NW11, NW12, NW13, NW14, NW15, NW16, NW17, NW18, NW19, NW20,
         NW21, NW22, NW23, NW24, NW25, NW26, NW27, NW28, NW29, NW30,
@@ -461,6 +461,7 @@ class EpgStationReserveRepository @Inject constructor(
             if (search.SKY == true) add("SKY")
             if (search.BS4K == true) add("BS4K")
             if (search.CS4K == true) add("CS4K")
+            if (search.CATV == true) add("CATV")
             listOf(
                 search.NW1, search.NW2, search.NW3, search.NW4, search.NW5,
                 search.NW6, search.NW7, search.NW8, search.NW9, search.NW10,

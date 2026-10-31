@@ -158,7 +158,7 @@ class ChannelViewModel @Inject constructor(
     private suspend fun transformToUiState(grouped: Map<String, List<Channel>>): List<LiveRowState> =
         withContext(Dispatchers.Default) {
             val now = System.currentTimeMillis()
-            val orderedTypes = listOf("GR", "BS", "CS", "BS4K", "SKY")
+            val orderedTypes = listOf("GR", "BS", "CS", "CATV", "BS4K", "SKY")
 
             val sortedKeys = grouped.keys.sortedBy { key ->
                 val index = orderedTypes.indexOf(key)
@@ -170,7 +170,7 @@ class ChannelViewModel @Inject constructor(
                 LiveRowState(
                     genreId = type,
                     genreLabel = when (type) {
-                        "GR" -> "地デジ"; "BS" -> "BS"; "CS" -> "CS"; "BS4K" -> "BS4K"; "SKY" -> "スカパー"; else -> type
+                        "GR" -> "地デジ"; "BS" -> "BS"; "CS" -> "CS"; "CATV" -> "CATV"; "BS4K" -> "BS4K"; "SKY" -> "スカパー"; else -> type
                     },
                     channels = channels.map { ch ->
                         val start = ch.programPresent?.startTime?.let {
@@ -208,7 +208,7 @@ class ChannelViewModel @Inject constructor(
 
             val processed = withContext(Dispatchers.Default) {
                 val rawChannels = listOfNotNull(
-                    response.terrestrial, response.bs, response.cs, response.sky, response.bs4k
+                    response.terrestrial, response.bs, response.cs, response.sky, response.bs4k, response.catv
                 ).flatten()
 
                 val allChannels = rawChannels.map { apiChannel ->

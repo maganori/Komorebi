@@ -302,7 +302,7 @@ class EpgViewModel @OptIn(UnstableApi::class)
 
                     viewModelScope.launch {
                         delay(10000)
-                        preloadEpgDataForSearch(listOf("GR", "BS", "CS", "SKY", "BS4K"))
+                        preloadEpgDataForSearch(listOf("GR", "BS", "CS", "SKY", "BS4K", "CATV"))
                     }
 
                 } else if (isInit && hasInitialFetched) {

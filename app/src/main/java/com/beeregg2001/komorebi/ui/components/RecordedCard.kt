@@ -65,6 +65,7 @@ fun RecordedCard(
         "GR" -> "地デジ" to Color(0xFF1E88E5)
         "BS" -> "BS" to Color(0xFFE53935)
         "CS" -> "CS" to Color(0xFFFB8C00)
+        "CATV" -> "CATV" to Color(0xFF8E24AA)
         else -> (program.channel?.type ?: "") to Color.Gray
     }
 

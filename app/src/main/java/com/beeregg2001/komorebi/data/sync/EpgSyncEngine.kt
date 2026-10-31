@@ -43,7 +43,10 @@ class EpgSyncEngine @Inject constructor(
                         message = "番組表データを同期中..."
                     )
 
-                    val channelTypes = listOf("GR", "BS", "CS", "BS4K", "SKY")
+                    // ★ CATV対応: CATV種別も同期対象に加える。CATV非対応の
+                    // バックエンドでは種別ごとのtry/catchでログのみ残して
+                    // 他種別の同期は継続する (従来のエラーハンドリングのまま)。
+                    val channelTypes = listOf("GR", "BS", "CS", "BS4K", "SKY", "CATV")
                     val now = OffsetDateTime.now()
                     val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 

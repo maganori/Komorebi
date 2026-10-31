@@ -606,7 +606,7 @@ class RecordViewModel @Inject constructor(
             }
         }
 
-        val typePriority = listOf("地デジ", "BS", "BS4K", "CS", "SKY", "その他")
+        val typePriority = listOf("地デジ", "BS", "BS4K", "CS", "CATV", "SKY", "その他")
         val extractNumber = { idStr: String ->
             Regex("\\d+").find(idStr)?.value?.toIntOrNull() ?: Int.MAX_VALUE
         }
