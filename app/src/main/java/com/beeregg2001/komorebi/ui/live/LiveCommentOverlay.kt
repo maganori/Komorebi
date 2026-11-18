@@ -45,14 +45,16 @@ fun LiveCommentOverlay(
             // ★ パフォーマンス究極チューニング (エラーになる非公開APIを削除)
             setDanmakuSync(null) // デフォルトの時計同期アルゴリズムを使用
 
-            // キャッシュのメモリ管理を最適化（カクツキの原因であるBitmap確保を裏で行う）
+            // キャッシュスタッファ (描画キャッシュは無効化しているため現在は未使用。
+            // 有効化に戻す場合に備えて設定自体は残してある)
             setCacheStuffer(
                 master.flame.danmaku.danmaku.model.android.SimpleTextCacheStuffer(),
                 null
             )
 
             // 最大表示数を制限して極端な負荷スパイクを防ぐ
-            setMaximumVisibleSizeInScreen(200)
+            // (フォーク独自の変更: 200 から 80 に削減。低スペック TV での描画負荷を抑える)
+            setMaximumVisibleSizeInScreen(80)
 
             val overlappingEnablePair = mapOf(
                 BaseDanmaku.TYPE_SCROLL_RL to true,
@@ -96,8 +98,11 @@ fun LiveCommentOverlay(
                     if (useSoftwareRendering) View.LAYER_TYPE_SOFTWARE else View.LAYER_TYPE_HARDWARE
                 setLayerType(initialLayerType, null)
 
-                // ★ 描画キャッシュを有効化（これで文字列->画像の変換処理が裏で行われる）
-                enableDanmakuDrawingCache(true)
+                // ★ 描画キャッシュは無効にする (フォーク独自の変更)
+                // 有効時は新規コメントの出現のたびに Bitmap 生成・回収が走り、
+                // Fire TV Stick 4K Max では数秒毎にコメントの流れが固まる症状が出た。
+                // 無効化で解消することを実機で確認済み。
+                enableDanmakuDrawingCache(false)
 
                 setCallback(object : DrawHandler.Callback {
                     override fun prepared() {
