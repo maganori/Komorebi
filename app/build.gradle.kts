@@ -23,7 +23,9 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.beeregg2001.Komorebi"
+        // フォーク独自ビルドを本家と共存させるため applicationId を変更 (フォーク独自の変更)
+        // プロバイダ権限は ${applicationId} 参照なので追随する。設定データは別アプリ扱いになる
+        applicationId = "com.beeregg2001.komorebi.maganori"
         minSdk = 24
         targetSdk = 34
         versionCode = 19 // 数値を1つ上げる
